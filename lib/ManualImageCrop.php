@@ -45,6 +45,7 @@ class ManualImageCrop {
 	 */
 	public function addEditorLinks() {
 		add_action( 'media_row_actions', array($this, 'addMediaEditorLinks'), 10, 2 );
+		add_action( 'attachment_fields_to_edit', array($this, 'addMediaEditorLinksGrid'), 10, 2 );
 		add_action( 'admin_post_thumbnail_html', array($this, 'addCropFeatureImageEditorLink'), 10, 2 );
 		add_action( 'print_media_templates', array($this, 'addAttachementEditLink') );
 		add_action( 'admin_print_footer_scripts', array($this, 'addAfterUploadAttachementEditLink') );
@@ -58,6 +59,21 @@ class ManualImageCrop {
 			$links['crop'] = '<a class="thickbox mic-link" rel="crop" title="Manual Image Crop" href="' . admin_url( 'admin-ajax.php' ) . '?action=mic_editor_window&postId=' . $post->ID . '">' . __('Crop','microp') . '</a>';
 		}
 		return $links;
+	}
+	
+	/**
+	 * Adds links in media library grid
+	 */
+	public function addMediaEditorLinksGrid($form_fields, $post) {
+		if (preg_match('/image/', $post->post_mime_type)) {
+			$form_fields["mic_button"] = array(
+			  'label' => __(""),
+			  'input' => "html",
+			  'html' => '<a class="thickbox mic-link button" rel="crop" title="Crop with Manual Image Crop" href="' . admin_url( 'admin-ajax.php' ) . '?action=mic_editor_window&postId=' . $post->ID . '">' . __('Manual Image Crop','microp') . '</a>',
+			  'show_in_edit' => false,
+			);
+		}
+		return $form_fields;
 	}
 
 	/**
